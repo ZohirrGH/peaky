@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PEAKY BLINDERS STORE</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=Crimson+Pro:wght@400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<video autoplay muted loop id="bgVideo">
+  <source src="vedios/MAFIA1.mp4" type="video/mp4">
+</video>
+
+<header>
+  <img src="images/logo.png" class="logo">
+  <h1 class="shop-name">PEAKY BLINDERS</h1>
+  <div class="search-container">
+    <input type="text" id="searchBar" placeholder="🔍 Search items...">
+    <button id="searchClear" onclick="clearSearch()">✖</button>
+    <div id="searchResults" class="search-results"></div>
+  </div>
+  <div class="header-right">
+    <div class="points-display" id="pointsDisplay">
+      ⭐ <span id="userPoints">0</span> pts
+    </div>
+    <button class="history-btn" id="historyBtn">📜 Orders</button>
+    <button onclick="import('./auth.js').then(m => m.logout())" class="logout-btn">🚪 Logout</button>
+  </div>
+  <div class="cat" onclick="filterItems('points')">⭐ Points Store</div>
+</header>
+
+<div class="intro-page" id="intro">
+  <h1>Welcome to PEAKY BLINDERS</h1>
+  <p>By order of the Peaky Blinders — only the finest goods for your crew</p>
+  <button id="startBtn">Step Inside</button>
+</div>
+
+<nav class="categories" id="categories">
+  <div class="cat" onclick="filterItems('all')">All items</div>
+  <div class="cat" onclick="filterItems('weapon')">weapons</div>
+  <div class="cat" onclick="filterItems('heist')">Hacker Gear</div>
+  <div class="cat" onclick="filterItems('gold')">jewellery</div>
+  <div class="cat" onclick="filterItems('drugs')">DRUGS</div>
+</nav>
+
+<div id="pointsStore" style="display:none;">
+  <h2 style="color:#d98c3a; margin:20px 0 0; text-align:center;">⭐ Points Store</h2>
+  <p style="color:#aaa; margin:5px 0 0; text-align:center;">عندك <strong id="pointsStoreCount" style="color:#d98c3a;">0</strong> نقطة</p>
+  <div class="points-store-grid" id="pointsStoreGrid"></div>
+</div>
+
+<div class="shop-grid" id="shop"></div>
+
+<h2>🧾 invoice</h2>
+<table id="invoice">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Amount</th>
+      <th>Price</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<h3 id="total">0 $</h3>
+<button id="pdfBtn">DOWNLOAD PDF</button>
+<div id="pdfForm" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.82); z-index:9999; align-items:center; justify-content:center; padding:24px;">
+  <div style="background:#111; border:1.5px solid #d98c3a; border-radius:16px; width:100%; max-width:420px; overflow:hidden; position:relative;">
+
+    <!-- HEADER -->
+    <div style="background:#0d0d0d; border-bottom:1px solid #2a2a2a; padding:22px 28px 18px; text-align:center;">
+      <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:4px;">
+        <div style="height:1px; flex:1; background:linear-gradient(to right, transparent, #d98c3a);"></div>
+        <span style="font-size:11px; letter-spacing:0.25em; color:#d98c3a; font-family:'IM Fell English SC',serif; text-transform:uppercase;">Peaky Blinders</span>
+        <div style="height:1px; flex:1; background:linear-gradient(to left, transparent, #d98c3a);"></div>
+      </div>
+      <h2 style="margin:6px 0 0; color:#efe2c2; font-family:'IM Fell English SC',serif; font-size:20px; font-weight:700; letter-spacing:0.08em;">INVOICE INFO</h2>
+      <p style="margin:4px 0 0; color:#666; font-size:12px; letter-spacing:0.1em;">FILL IN THE DETAILS BELOW</p>
+    </div>
+
+    <!-- FIELDS -->
+    <div style="padding:24px 28px 20px; display:flex; flex-direction:column; gap:16px;">
+
+      <!-- Buyer Name -->
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <label style="font-size:11px; color:#d98c3a; letter-spacing:0.15em; text-transform:uppercase; font-family:'IM Fell English SC',serif;">Buyer Name</label>
+        <div style="position:relative;">
+          <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:14px; color:#555;">👤</span>
+          <input type="text" id="buyerName" placeholder="Enter your name..."
+            style="width:100%; box-sizing:border-box; padding:11px 12px 11px 36px; background:#0d0d0d; border:1px solid #2a2a2a; border-radius:8px; color:#eee; font-size:14px; outline:none; font-family:'Crimson Pro',sans-serif; transition:border-color 0.2s;"
+            onfocus="this.style.borderColor='#d98c3a'" onblur="this.style.borderColor='#2a2a2a'">
+        </div>
+      </div>
+
+      <!-- Gang Name -->
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <label style="font-size:11px; color:#d98c3a; letter-spacing:0.15em; text-transform:uppercase; font-family:'IM Fell English SC',serif;">Gang Name</label>
+        <div style="position:relative;">
+          <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:14px; color:#555;">🏴</span>
+          <select id="gangName"
+            style="width:100%; box-sizing:border-box; padding:11px 12px 11px 36px; background:#0d0d0d; border:1px solid #2a2a2a; border-radius:8px; color:#eee; font-size:14px; outline:none; font-family:'Crimson Pro',sans-serif; appearance:none; cursor:pointer; transition:border-color 0.2s;"
+            onfocus="this.style.borderColor='#d98c3a'" onblur="this.style.borderColor='#2a2a2a'">
+            <option value="" style="background:#111;">-- Choose Gang --</option>
+            <option value="Bloods" style="background:#111;">🔴 BLOODS</option>
+            <option value="Crips" style="background:#111;">🔵 CRIPS</option>
+            <option value="Famizz" style="background:#111;">🟢 FAMIZZ</option>
+            <option value="Chang Gang" style="background:#111;">🟠 CHANG GANG</option>
+            <option value="Ghost Riders" style="background:#111;">⚫ GHOST RIDERS</option>
+            <option value="Blazz" style="background:#111;">🟣 BLAZZ</option>
+            <option value="Aztecas" style="background:#111;">🔵 AZTECAS</option>
+            <option value="Maranova" style="background:#111;">🔵 MARANOVA</option>
+            <option value="VACOS" style="background:#111;">🟡 VASCOS </option>
+            
+            <option value="Calavera" style="background:#111;">⚫ CALAVERA</option>
+          </select>
+          <span style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:#555; pointer-events:none; font-size:12px;">▼</span>
+        </div>
+      </div>
+
+      <!-- Radio -->
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <label style="font-size:11px; color:#d98c3a; letter-spacing:0.15em; text-transform:uppercase; font-family:'IM Fell English SC',serif;">Radio</label>
+        <div style="position:relative;">
+          <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:14px; color:#555;">📻</span>
+          <input type="text" id="radioName" placeholder="Radio channel..."
+            style="width:100%; box-sizing:border-box; padding:11px 12px 11px 36px; background:#0d0d0d; border:1px solid #2a2a2a; border-radius:8px; color:#eee; font-size:14px; outline:none; font-family:'Crimson Pro',sans-serif; transition:border-color 0.2s;"
+            onfocus="this.style.borderColor='#d98c3a'" onblur="this.style.borderColor='#2a2a2a'">
+        </div>
+      </div>
+
+      <!-- BUTTONS -->
+      <div style="display:flex; gap:10px; margin-top:6px;">
+        <button id="cancelPDF"
+          style="flex:1; padding:12px; background:transparent; border:1px solid #333; border-radius:8px; color:#777; font-size:13px; font-weight:600; cursor:pointer; letter-spacing:0.08em; font-family:'Crimson Pro',sans-serif; transition:all 0.2s;"
+          onmouseover="this.style.borderColor='#555';this.style.color='#aaa'"
+          onmouseout="this.style.borderColor='#333';this.style.color='#777'">
+          ✖ CANCEL
+        </button>
+        <button id="confirmPDF"
+          style="flex:2; padding:12px; background:#d98c3a; border:none; border-radius:8px; color:#111; font-size:13px; font-weight:700; cursor:pointer; letter-spacing:0.1em; font-family:'IM Fell English SC',serif; transition:all 0.2s;"
+          onmouseover="this.style.background='#e9a24f'"
+          onmouseout="this.style.background='#d98c3a'">
+          ✅ CONFIRM ORDER
+        </button>
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div style="padding:12px 28px 16px; border-top:1px solid #1a1a1a; text-align:center;">
+      <p style="margin:0; font-size:10px; color:#444; letter-spacing:0.12em; font-family:'IM Fell English SC',serif;">GALAXY ROLEPLAY · GX. 2026</p>
+    </div>
+
+  </div>
+</div>
+
+<div id="musicPlayer" class="music-player hidden">
+  <button id="playPause">▶</button>
+  <input type="range" id="volume" min="0" max="1" step="0.01" value="0.3">
+  <button id="closePlayer">✖</button>
+</div>
+<audio id="bgMusic" src="music/mafia.mp3" loop></audio>
+
+<div id="visitorCounter" class="visitor-counter">
+  <span class="eye-icon">👁</span>
+  <span id="visitorCount">0</span>
+</div>
+
+<script type="module" src="script.js"></script>
+
+<div id="cartNotif" class="cart-notif">
+  <img id="cartNotifImg" src="" alt="">
+  <div class="cart-notif-info">
+    <span id="cartNotifName"></span>
+    <small>✅ Added to invoice!</small>
+  </div>
+</div>
+
+<div id="historyModal" class="history-modal">
+  <div class="history-box">
+    <div class="history-header">
+      <h2>📜 My Orders</h2>
+      <button onclick="closeHistory()" class="close-history">✖</button>
+    </div>
+    <div id="historyList" class="history-list">
+      <p style="color:#aaa;text-align:center;">Loading...</p>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer style="
+  margin-top: 60px;
+  border-top: 1px solid rgba(217,140,58,0.3);
+  background: rgba(8,8,8,0.9);
+  backdrop-filter: blur(20px);
+  padding: 30px 24px 20px;
+  text-align: center;
+">
+  <img src="images/logo.png" style="width:48px; margin-bottom:12px; filter:drop-shadow(0 0 8px rgba(217,140,58,0.4));">
+
+  <p style="font-family:'IM Fell English SC',serif; color:#d98c3a; font-size:15px; letter-spacing:0.1em; margin-bottom:6px;">
+    PEAKY BLINDERS
+  </p>
+
+  <p style="color:#555; font-size:12px; margin-bottom:20px; letter-spacing:0.04em;">
+    © 2026 Peaky Blinders — GX Server. All rights reserved.
+  </p>
+
+  <div style="display:flex; justify-content:center; gap:16px; margin-bottom:16px;">
+
+    <!-- Instagram -->
+    <a href="https://www.instagram.com/YOUR_INSTAGRAM" target="_blank" title="Instagram"
+      style="
+        width:44px; height:44px;
+        background: linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);
+        border-radius:12px;
+        display:flex; align-items:center; justify-content:center;
+        text-decoration:none;
+        transition: transform 0.3s, box-shadow 0.3s;
+      "
+      onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(253,29,29,0.4)'"
+      onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'"
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+      </svg>
+    </a>
+
+    <!-- Discord -->
+    <a href="https://discord.gg/YOUR_INVITE" target="_blank" title="Discord — Galaxy RolePlay"
+      style="
+        width:44px; height:44px;
+        background:#5865F2;
+        border-radius:12px;
+        display:flex; align-items:center; justify-content:center;
+        text-decoration:none;
+        transition: transform 0.3s, box-shadow 0.3s;
+      "
+      onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(88,101,242,0.5)'"
+      onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'"
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.04.033.054a19.896 19.896 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+      </svg>
+    </a>
+
+  </div>
+
+  <p style="color:#333; font-size:11px; letter-spacing:0.06em;">
+    GALAXY ROLEPLAY · GX. 2026
+  </p>
+</footer>
+
+
+<script>
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) ||
+      (e.ctrlKey && e.key === 'U') ||
+      (e.ctrlKey && e.key === 'S')
+    ) {
+      e.preventDefault();
+      return false;
+    }
+  });
+  setInterval(() => {
+    if (
+      window.outerWidth - window.innerWidth > 160 ||
+      window.outerHeight - window.innerHeight > 160
+    ) {
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#d98c3a;font-family:'IM Fell English SC',serif;font-size:24px;">⛔ Access Denied</div>';
+    }
+  }, 1000);
+</script>
+
+</body>
+</html>

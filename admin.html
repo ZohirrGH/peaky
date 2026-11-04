@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Peaky Blinders</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=Crimson+Pro:wght@400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
+  <style>
+    .admin-wrapper { max-width: 1100px; margin: auto; padding: 30px 20px; }
+    .admin-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; }
+    .admin-header h1 { color:#d98c3a; font-family:'IM Fell English SC',serif; font-size:28px; }
+    .admin-tabs { display:flex; gap:10px; margin-bottom:25px; flex-wrap:wrap; }
+    .tab-btn { padding:10px 22px; border:2px solid #d98c3a; background:transparent; color:#d98c3a; border-radius:8px; cursor:pointer; font-weight:bold; transition:all 0.3s; }
+    .tab-btn.active, .tab-btn:hover { background:#d98c3a; color:#111; }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+    .admin-table { width:100%; border-collapse:collapse; margin-top:15px; }
+    .admin-table th { background:#d98c3a; color:#111; padding:10px; text-align:left; }
+    .admin-table td { padding:10px; border-bottom:1px solid #333; color:#eee; font-size:14px; }
+    .admin-table tr:hover { background:#2a2a2a; }
+    .form-box { background:#1a1a1a; border:1px solid #d98c3a; border-radius:12px; padding:25px; max-width:500px; margin-bottom:30px; }
+    .form-box h3 { color:#d98c3a; margin-bottom:20px; }
+    .form-row { display:flex; flex-direction:column; gap:8px; margin-bottom:15px; }
+    .form-row label { font-size:13px; color:#aaa; }
+    .form-row input, .form-row select { padding:10px; background:#111; border:1px solid #555; border-radius:8px; color:#fff; font-size:14px; outline:none; }
+    .form-row input:focus { border-color:#d98c3a; box-shadow:0 0 8px rgba(217,140,58,0.3); }
+    .points-badge { background:#d98c3a; color:#111; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:bold; }
+    .role-badge { padding:3px 10px; border-radius:20px; font-size:12px; font-weight:bold; }
+    .role-admin { background:#af2121; color:#fff; }
+    .role-user { background:#2ecc71; color:#111; }
+    .action-btn { padding:5px 12px; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:bold; margin:2px; transition:all 0.3s; }
+    .btn-edit { background:#3498db; color:#fff; }
+    .btn-delete { background:#e74c3c; color:#fff; }
+    .btn-points { background:#d98c3a; color:#111; }
+    .products-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:15px; margin-top:15px; }
+    .product-admin-card { background:#1a1a1a; border:1px solid #333; border-radius:10px; padding:15px; }
+    .product-admin-card img { width:60px; height:60px; object-fit:contain; }
+    .product-admin-card h4 { color:#eee; font-size:14px; margin:8px 0 5px; }
+    .price-input { width:100%; padding:6px; background:#111; border:1px solid #555; border-radius:6px; color:#d98c3a; font-weight:bold; font-size:14px; margin:5px 0; }
+    .status-select { width:100%; padding:6px; background:#111; border:1px solid #555; border-radius:6px; color:#fff; font-size:13px; margin:5px 0; }
+    .save-product-btn { width:100%; padding:8px; background:#d98c3a; color:#111; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:8px; transition:all 0.3s; }
+    .save-product-btn:hover { box-shadow:0 0 12px #d98c3a; }
+    .saved-badge { color:#2ecc71; font-size:12px; text-align:center; margin-top:5px; display:none; }
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:15px; margin-bottom:25px; }
+    .stat-card { background:#1a1a1a; border:1px solid #d98c3a; border-radius:12px; padding:20px; text-align:center; }
+    .stat-card h2 { color:#d98c3a; font-size:32px; margin:0; }
+    .stat-card p { color:#aaa; font-size:13px; margin:5px 0 0; }
+    .success-msg { color:#2ecc71; font-size:13px; margin-top:8px; display:none; }
+    .error-msg2 { color:#e74c3c; font-size:13px; margin-top:8px; display:none; }
+  </style>
+</head>
+<body>
+<video autoplay muted loop id="bgVideo">
+  <source src="vedios/MAFIA1.mp4" type="video/mp4">
+</video>
+
+<div class="admin-wrapper">
+  <div class="admin-header">
+    <h1>⚙️ ADMIN DASHBOARD</h1>
+    <div style="display:flex; gap:10px;">
+      <button onclick="window.location.href='index.html'" style="background:#d98c3a;color:#111;padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-weight:bold;">🏠 Store</button>
+      <button onclick="import('./auth.js').then(m=>m.logout())" style="background:#af2121;color:#fff;padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-weight:bold;">🚪 Logout</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><h2 id="statUsers">0</h2><p>Total Users</p></div>
+    <div class="stat-card"><h2 id="statProducts">0</h2><p>Products</p></div>
+    <div class="stat-card"><h2 id="statInvoices">0</h2><p>Total Invoices</p></div>
+  </div>
+
+  <div class="admin-tabs">
+    <button class="tab-btn active" onclick="showTab('users', event)">👥 Users</button>
+    <button class="tab-btn" onclick="showTab('products', event)">📦 Products</button>
+  </div>
+
+  <!-- USERS TAB -->
+  <div class="tab-content active" id="tab-users">
+    <div class="form-box">
+      <h3>➕ Add New User</h3>
+      <div class="form-row"><label>Email</label><input type="email" id="newEmail" placeholder="user@email.com"></div>
+      <div class="form-row"><label>Password</label><input type="password" id="newPass" placeholder="Password"></div>
+      <div class="form-row"><label>Points</label><input type="number" id="newPoints" placeholder="0" value="0"></div>
+      <div class="form-row">
+        <label>Role</label>
+        <select id="newRole">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <button class="login-btn" id="addUserBtn" style="width:100%;padding:12px;">Add User</button>
+      <p class="success-msg" id="addSuccess">✅ User added successfully</p>
+      <p class="error-msg2" id="addError"></p>
+    </div>
+
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Points</th>
+          <th>Invoices</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="usersTableBody">
+        <tr><td colspan="5" style="text-align:center;color:#666;">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PRODUCTS TAB -->
+  <div class="tab-content" id="tab-products">
+    <div class="form-box" style="max-width:600px; margin-bottom:30px;">
+      <h3>➕ Add New Product</h3>
+      <div class="form-row"><label>Product Name</label><input type="text" id="newProdName" placeholder="e.g. AK-47"></div>
+      <div class="form-row"><label>Price ($)</label><input type="number" id="newProdPrice" placeholder="e.g. 50000"></div>
+      <div class="form-row">
+        <label>Category</label>
+        <select id="newProdCat">
+          <option value="weapon">Weapon</option>
+          <option value="heist">Hacker Gear</option>
+          <option value="gold">Jewellery</option>
+          <option value="drugs">Drugs</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Status</label>
+        <select id="newProdStatus">
+          <option value="green">🟢 Available</option>
+          <option value="orange">🟠 Almost Sold Out</option>
+          <option value="red">🔴 Not Available</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Image</label>
+        <input type="file" id="newProdImg" accept="image/*" style="color:#aaa; padding:6px;">
+        <div id="newProdPreview" style="margin-top:10px; display:none;">
+          <img id="newProdPreviewImg" style="width:80px; height:80px; object-fit:contain; border:1px solid #d98c3a; border-radius:8px;">
+        </div>
+      </div>
+      <button class="login-btn" id="addProductBtn" style="width:100%; padding:12px; margin-top:5px;">➕ Add Product</button>
+      <p class="success-msg" id="addProdSuccess">✅ Product added!</p>
+      <p class="error-msg2" id="addProdError"></p>
+    </div>
+
+    <p style="color:#aaa;margin-bottom:15px;">Edit prices and availability of products directly:</p>
+    <div class="products-grid" id="adminProductsGrid"></div>
+  </div>
+</div>
+
+
+<script>
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) ||
+      (e.ctrlKey && e.key === 'U') ||
+      (e.ctrlKey && e.key === 'S')
+    ) {
+      e.preventDefault();
+      return false;
+    }
+  });
+  setInterval(() => {
+    if (
+      window.outerWidth - window.innerWidth > 160 ||
+      window.outerHeight - window.innerHeight > 160
+    ) {
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#d98c3a;font-family:'IM Fell English SC',serif;font-size:24px;">⛔ Access Denied</div>';
+    }
+  }, 1000);
+</script>
+
+<script type="module" src="admin.js"></script>
+</body>
+</html>
