@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 700" width="400" height="700">
+<defs>
+ <filter id="rough" x="-10%" y="-10%" width="120%" height="120%">
+  <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="8" result="n"/>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="5"/>
+ </filter>
+ <filter id="halo" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="14"/></filter>
+</defs>
+<!-- warm spray halo behind the figure -->
+<g filter="url(#halo)" opacity=".55"><ellipse cx="205" cy="360" rx="150" ry="300" fill="#d98c3a"/></g>
+<g filter="url(#rough)">
+ <!-- coat -->
+ <path d="M112 214 C84 236 72 304 64 424 L50 700 L352 700 L338 424 C330 304 320 236 292 214 L256 194 L202 262 L146 194 Z" fill="#0b0908"/>
+ <!-- collar -->
+ <path d="M146 194 L172 168 L202 206 Z M256 194 L232 168 L202 206 Z" fill="#0b0908" stroke="#e6dcc3" stroke-width="3" stroke-linejoin="round"/>
+ <!-- lapel + coat highlights (stencil edges) -->
+ <path d="M202 262 L158 440 M202 262 L246 440" stroke="#e6dcc3" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".85"/>
+ <path d="M112 214 C84 236 72 304 64 424 M292 214 C320 236 330 304 338 424" stroke="#e6dcc3" stroke-width="3" fill="none" opacity=".55"/>
+ <path d="M100 452 L154 470 M304 452 L250 470" stroke="#e6dcc3" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/>
+ <!-- waistcoat chain -->
+ <path d="M202 330 C222 372 246 372 258 346" stroke="#d98c3a" stroke-width="3" fill="none"/>
+ <!-- neck -->
+ <path d="M178 170 L180 196 L226 196 L228 166 Z" fill="#0b0908"/>
+ <!-- face, three-quarter profile -->
+ <path d="M170 112 C170 72 200 54 232 64 C254 72 258 98 252 120 L266 130 L250 136 C248 162 238 178 212 184 C190 182 172 162 170 132 Z" fill="#0b0908" stroke="#e6dcc3" stroke-width="3" stroke-linejoin="round"/>
+ <path d="M226 108 L246 106" stroke="#e6dcc3" stroke-width="3.5" stroke-linecap="round"/>
+ <path d="M196 150 C206 160 222 160 234 152" stroke="#e6dcc3" stroke-width="2.5" fill="none" opacity=".7"/>
+ <!-- flat cap -->
+ <path d="M154 98 C156 44 204 24 254 36 C288 44 302 70 304 100 L170 108 Z" fill="#0b0908" stroke="#e6dcc3" stroke-width="3" stroke-linejoin="round"/>
+ <path d="M238 98 L324 106 C326 118 306 124 284 122 L236 112 Z" fill="#0b0908" stroke="#e6dcc3" stroke-width="3" stroke-linejoin="round"/>
+ <circle cx="216" cy="32" r="7" fill="#e6dcc3"/>
+ <path d="M168 92 C200 70 262 62 296 90" stroke="#e6dcc3" stroke-width="2.5" fill="none" stroke-dasharray="6 7" opacity=".7"/>
+ <!-- cigarette + smoke -->
+ <path d="M252 152 L296 160" stroke="#f3ead2" stroke-width="5" stroke-linecap="round"/>
+ <circle cx="299" cy="160.5" r="4.5" fill="#d98c3a"/>
+ <path d="M302 150 C314 134 294 120 310 102 C322 88 304 76 318 60" stroke="#e6dcc3" stroke-width="3" fill="none" opacity=".55" stroke-linecap="round"/>
+</g>
+<!-- drips from the hem -->
+<g fill="#d98c3a" opacity=".9">
+ <rect x="90" y="696" width="5" height="4" /> 
+</g>
+</svg>
