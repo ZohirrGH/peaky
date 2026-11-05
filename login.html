@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ✅ preconnect عشان Google Fonts يحمل أسرع -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=Crimson+Pro:wght@400;500;600;700&family=Special+Elite&family=Rubik+Spray+Paint&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Peaky Blinders</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .login-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-box {
+      background: #1a1a1a;
+      border: 2px solid #d98c3a;
+      border-radius: 16px;
+      padding: 40px;
+      width: 340px;
+      box-shadow: 0 0 40px rgba(217,140,58,0.3);
+      text-align: center;
+    }
+    .login-box img { width: 80px; margin-bottom: 15px; }
+    .login-box h2 { color: #d98c3a; margin-bottom: 25px; font-family: 'IM Fell English SC', serif; }
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      background: #111;
+      border: 1px solid #d98c3a;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .login-box input:focus { outline: none; box-shadow: 0 0 10px #d98c3a; }
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      background: #d98c3a;
+      color: #111;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: all 0.3s;
+    }
+    .login-btn:hover { box-shadow: 0 0 20px #d98c3a; transform: scale(1.03); }
+    .login-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+    .error-msg { color: #e74c3c; font-size: 13px; margin-top: 10px; display: none; }
+  </style>
+</head>
+<body>
+  <!-- ✅ الفيديو يحمل بعد الصفحة (preload=none) -->
+  <video autoplay muted loop id="bgVideo" preload="none" playsinline>
+    <source src="vedios/MAFIA1.mp4" type="video/mp4">
+  </video>
+
+  <img class="login-figure" src="images/figure.svg" alt="">
+  <div class="login-wrapper">
+    <div class="login-box">
+      <img src="images/logo.png" alt="logo" loading="lazy">
+      <h2>PEAKY BLINDERS</h2>
+      <p class="login-tag">BY ORDER OF THE PEAKY BLINDERS</p>
+      <input type="email" id="emailInput" placeholder="Email" autocomplete="email">
+      <input type="password" id="passInput" placeholder="Password" autocomplete="current-password">
+      <button class="login-btn" id="loginBtn">ENTER</button>
+      <p class="error-msg" id="errorMsg">❌ Email or Password incorrect</p>
+    </div>
+  </div>
+
+  <!-- ✅ نشغل الفيديو بعد تحميل الصفحة -->
+  <script>
+    window.addEventListener('load', () => {
+      const vid = document.getElementById('bgVideo');
+      if (vid) {
+        vid.load();
+        vid.play().catch(() => {});
+      }
+    });
+
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      if (
+        e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) ||
+        (e.ctrlKey && e.key === 'U') ||
+        (e.ctrlKey && e.key === 'S')
+      ) {
+        e.preventDefault();
+        return false;
+      }
+    });
+  </script>
+
+  <script type="module" src="auth.js"></script>
+</body>
+</html>
